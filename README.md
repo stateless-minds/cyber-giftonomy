@@ -30,7 +30,7 @@ https://www.reddit.com/r/CyberGiftonomy/
 
 ## Installation
 
-The game runs on the public IPFS network. In order to play it follow the steps below:
+The app runs on the public IPFS network. In order to use it follow the steps below:
 
 1. Install the official IPFS Desktop http://docs.ipfs.io/install/ipfs-desktop/
 2. Install IPFS Companion http://docs.ipfs.io/install/ipfs-companion/
@@ -56,7 +56,7 @@ make build
 ./cmd/ipfs/ipfs daemon --enable-pubsub-experiment
 ```
 7.  Navigate to <a href="https://ipfs.io/ipns/k51qzi5uqu5dk32d3b06vug3radhkdh3i47vtbvzxbi2k7if8f2qahqidse46c">Cyber Giftonomy</a>
-8.  If you like the game consider pinning it to your local node so that you become a permanent host of it while you have IPFS daemon running
+8.  If you like the app consider pinning it to your local node so that you become a permanent host of it while you have IPFS daemon running
 ![SetPinning](./assets/pin.png)
 ![PinToLocalNode](./assets/pin-to-local-node.png)
 
