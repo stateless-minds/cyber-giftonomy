@@ -28,7 +28,7 @@ Submit the stuff you are giving away and post its coordinates. Anyone can pick i
 
 https://www.reddit.com/r/CyberGiftonomy/
 
-## How to Play
+## Installation
 
 The game runs on the public IPFS network. In order to play it follow the steps below:
 
