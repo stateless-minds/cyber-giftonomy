@@ -12,6 +12,10 @@ Submit the stuff you are giving away and post its coordinates. Anyone can pick i
 
 ## Screenshots
 
+<a display="inline" href="./assets/home.png?raw=true">
+<img src="./assets/home.png" width="45%" alt="Screenshot of the home screen" title="Screenshot of the home screen">
+</a>
+
 <a display="inline" href="./assets/give.png?raw=true">
 <img src="./assets/give.png" width="45%" alt="Screenshot of the form screen" title="Screenshot of the form screen">
 </a>
