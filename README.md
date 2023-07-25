@@ -13,11 +13,11 @@ Submit the stuff you are giving away and post its coordinates. Anyone can pick i
 ## Screenshots
 
 <a display="inline" href="./assets/give.png?raw=true">
-<img src="./assets/home.png" width="45%" alt="Screenshot of the homepage" title="Screenshot of the homepage">
+<img src="./assets/give.png" width="45%" alt="Screenshot of the form screen" title="Screenshot of the form screen">
 </a>
 
 <a display="inline" href="./assets/browse.png?raw=true">
-<img src="./assets/ranks.png" width="45%" alt="Screenshot of the ranks screen" title="Screenshot of the gallery screen">
+<img src="./assets/browse.png" width="45%" alt="Screenshot of the gallery screen" title="Screenshot of the gallery screen">
 </a>
 
 ## Community
@@ -55,11 +55,6 @@ make build
 8.  If you like the game consider pinning it to your local node so that you become a permanent host of it while you have IPFS daemon running
 ![SetPinning](./assets/pin.png)
 ![PinToLocalNode](./assets/pin-to-local-node.png)
-
-## Ideas
-1. Add search bar
-2. Paginate items
-
 
 ## Acknowledgments
 
