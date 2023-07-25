@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -25,7 +24,7 @@ type cybergiftonomy struct {
 	app.Compo
 	sh    *shell.Shell
 	sub   *shell.PubSubSubscription
-	gifts []Gift
+	gifts map[string]Gift
 	alert string
 }
 
@@ -36,7 +35,6 @@ type Gift struct {
 	Coordinates string   `mapstructure:"coordinates" json:"coordinates" validate:"uuid_rfc4122"`
 	Photo       string   `mapstructure:"photo" json:"photo" validate:"uuid_rfc4122"`
 	Tags        []string `mapstructure:"tags" json:"tags" validate:"uuid_rfc4122"`
-	Collected   string   `mapstructure:"collected" json:"collected" validate:"uuid_rfc4122"`
 }
 
 func (c *cybergiftonomy) OnMount(ctx app.Context) {
@@ -45,6 +43,8 @@ func (c *cybergiftonomy) OnMount(ctx app.Context) {
 
 	c.subscribeToCreateGiftTopic(ctx)
 	c.subscribeToCollectGiftTopic(ctx)
+
+	c.gifts = make(map[string]Gift)
 
 	ctx.Async(func() {
 		// c.DeleteGifts(ctx)
@@ -62,10 +62,11 @@ func (c *cybergiftonomy) OnMount(ctx app.Context) {
 				log.Fatal(err)
 			}
 			ctx.Dispatch(func(ctx app.Context) {
-				c.gifts = append(c.gifts, g)
-				sort.SliceStable(c.gifts, func(i, j int) bool {
-					return c.gifts[i].ID < c.gifts[j].ID
-				})
+				c.gifts[g.ID] = g
+
+				// sort.SliceStable(c.gifts, func(i, j int) bool {
+				// 	return c.gifts[i].ID < c.gifts[j].ID
+				// })
 			})
 		}
 	})
@@ -79,7 +80,7 @@ func (c *cybergiftonomy) DeleteGifts(ctx app.Context) {
 }
 
 func (c *cybergiftonomy) FetchGifts(ctx app.Context) []byte {
-	v, err := c.sh.OrbitDocsQuery(dbNameGift, "collected", "false")
+	v, err := c.sh.OrbitDocsQuery(dbNameGift, "all", "")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -121,7 +122,7 @@ func (c *cybergiftonomy) subscriptionCreateGift(ctx app.Context) {
 		}
 
 		ctx.Dispatch(func(ctx app.Context) {
-			c.gifts = append(c.gifts, g)
+			c.gifts[g.ID] = g
 		})
 	})
 }
@@ -160,11 +161,7 @@ func (c *cybergiftonomy) subscriptionCollectGift(ctx app.Context) {
 		}
 
 		ctx.Dispatch(func(ctx app.Context) {
-			id, err := strconv.Atoi(g.ID)
-			if err != nil {
-				log.Fatal(err)
-			}
-			c.gifts[id-1] = g
+			delete(c.gifts, g.ID)
 		})
 	})
 }
@@ -237,28 +234,26 @@ func (c *cybergiftonomy) Render() app.UI {
 		app.Div().ID("gallery").Class("col center-x space-y-0 page-hero").Attr("xyz", "fade small stagger ease-out-back").Body(
 			app.Div().Class("col container gallery-container").Body(
 				app.Div().Class("gallery-section row space-10 xyz-nested").Attr("xyz", "fade left stagger").Body(
-					app.Range(c.gifts).Slice(func(i int) app.UI {
-						return app.If(c.gifts[i].Collected == "false",
-							app.Div().ID(strconv.Itoa(i)).Class("card card-gallery section-item xyz-nested").Body(
-								app.Div().Class("row p-10").Body(
-									app.Header().Text(c.gifts[i].Title),
-								),
-								app.Div().Class("row p-10").Body(
-									app.Span().Body(app.Img().Src(c.gifts[i].Photo).Alt(c.gifts[i].Title).Height(250).Width(250)),
-								),
-								app.Div().Class("row p-10").Body(
-									app.Span().Body(app.Text(c.gifts[i].Description)),
-								),
-								app.Div().Class("tags").Body(
-									app.Range(c.gifts[i].Tags).Slice(func(n int) app.UI {
-										return app.Span().Class("badge").Text(c.gifts[i].Tags[n])
-									}),
-								),
-								app.Div().Class("row p-10").Body(
-									app.Span().Body(app.Strong().Text("Pickup coordinates: "+c.gifts[i].Coordinates)),
-								),
-								app.Button().Class("button mt-30 is-success xyz-nested").Text("Collect").OnClick(c.onCollectGift),
+					app.Range(c.gifts).Map(func(i string) app.UI {
+						return app.Div().ID(i).Class("card card-gallery section-item xyz-nested").Body(
+							app.Div().Class("row p-10").Body(
+								app.Header().Text(c.gifts[i].Title),
 							),
+							app.Div().Class("row p-10").Body(
+								app.Span().Body(app.Img().Src(c.gifts[i].Photo).Alt(c.gifts[i].Title).Height(250).Width(250)),
+							),
+							app.Div().Class("row p-10").Body(
+								app.Span().Body(app.Text(c.gifts[i].Description)),
+							),
+							app.Div().Class("tags").Body(
+								app.Range(c.gifts[i].Tags).Slice(func(n int) app.UI {
+									return app.Span().Class("badge").Text(c.gifts[i].Tags[n])
+								}),
+							),
+							app.Div().Class("row p-10").Body(
+								app.Span().Body(app.Strong().Text("Pickup coordinates: "+c.gifts[i].Coordinates)),
+							),
+							app.Button().Class("button mt-30 is-success xyz-nested").Text("Collect").OnClick(c.onCollectGift),
 						)
 					}),
 				).Style("--carousel-start", "-"+strconv.Itoa(len(c.gifts)*250)+"px").Style("--carousel-end", strconv.Itoa(len(c.gifts)*250)+"px"),
@@ -364,7 +359,6 @@ func (c *cybergiftonomy) onSubmitGift(ctx app.Context, e app.Event) {
 		Coordinates: coordinates,
 		Photo:       app.Window().GetElementByID("preview").Get("src").String(),
 		Tags:        tagsSlice,
-		Collected:   "false",
 	}
 
 	gft, err := json.Marshal(g)
@@ -394,19 +388,14 @@ func (c *cybergiftonomy) onSubmitGift(ctx app.Context, e app.Event) {
 func (c *cybergiftonomy) onCollectGift(ctx app.Context, e app.Event) {
 	e.PreventDefault()
 	pid := ctx.JSSrc().Get("parentElement").Get("id").String()
-	id, err := strconv.Atoi(pid)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	g := Gift{
 		ID:          pid,
-		Title:       c.gifts[id].Title,
-		Description: c.gifts[id].Description,
-		Coordinates: c.gifts[id].Coordinates,
-		Photo:       c.gifts[id].Photo,
-		Tags:        c.gifts[id].Tags,
-		Collected:   "true",
+		Title:       c.gifts[pid].Title,
+		Description: c.gifts[pid].Description,
+		Coordinates: c.gifts[pid].Coordinates,
+		Photo:       c.gifts[pid].Photo,
+		Tags:        c.gifts[pid].Tags,
 	}
 
 	gft, err := json.Marshal(g)
@@ -415,10 +404,10 @@ func (c *cybergiftonomy) onCollectGift(ctx app.Context, e app.Event) {
 	}
 
 	ctx.Async(func() {
-		err = c.sh.OrbitDocsPut(dbNameGift, gft)
+		err = c.sh.OrbitDocsDelete(dbNameGift, g.ID)
 		if err != nil {
 			ctx.Dispatch(func(ctx app.Context) {
-				c.Alert(ctx, "Error: could not update gift.")
+				c.Alert(ctx, "Error: could not delete collected gift.")
 				log.Fatal(err)
 			})
 		}
