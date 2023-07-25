@@ -1,6 +1,6 @@
 # Cyber Giftonomy
 
-![Logo](./assets/home.png)
+![Logo](./assets/demo.gif)
 
 ## Gift economy
 
