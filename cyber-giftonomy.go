@@ -21,8 +21,6 @@ const (
 	topicCollectGift = "collect-gift"
 )
 
-const IPFSGateway = "https://ipfs.io/ipfs/"
-
 type cybergiftonomy struct {
 	app.Compo
 	sh    *shell.Shell
