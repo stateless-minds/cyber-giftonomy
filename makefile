@@ -3,4 +3,4 @@ build:
 	go build
 
 run: build
-	./cyber-gift
+	./cyber-giftonomy
