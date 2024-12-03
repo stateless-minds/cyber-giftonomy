@@ -43,7 +43,7 @@ git clone https://github.com/stateless-minds/kubo.git
 ```{
   "API": {
     "HTTPHeaders": {
-      "Access-Control-Allow-Origin": ["webui://-", "http://localhost:3000", "http://k51qzi5uqu5dk32d3b06vug3radhkdh3i47vtbvzxbi2k7if8f2qahqidse46c.ipns.localhost:8080", "http://127.0.0.1:5001", "https://webui.ipfs.io"],
+      "Access-Control-Allow-Origin": ["webui://-", "http://localhost:3000", "http://k51qzi5uqu5dlo973u7yudf1wby6bnznujbuf4mdanuyo4c70xepl5m8iqgeer.ipns.localhost:8080", "http://127.0.0.1:5001", "https://webui.ipfs.io"],
       "Access-Control-Allow-Credentials": ["true"],
       "Access-Control-Allow-Methods": ["PUT", "POST"]
     }
@@ -55,7 +55,7 @@ cd kubo
 make build
 ./cmd/ipfs/ipfs daemon --enable-pubsub-experiment
 ```
-7.  Navigate to <a href="https://ipfs.io/ipns/k51qzi5uqu5dk32d3b06vug3radhkdh3i47vtbvzxbi2k7if8f2qahqidse46c">Cyber Giftonomy</a>
+7.  Navigate to <a href="https://ipfs.io/ipns/k51qzi5uqu5dlo973u7yudf1wby6bnznujbuf4mdanuyo4c70xepl5m8iqgeer">Cyber Giftonomy</a>
 8.  If you like the app consider pinning it to your local node so that you become a permanent host of it while you have IPFS daemon running
 ![SetPinning](./assets/pin.png)
 ![PinToLocalNode](./assets/pin-to-local-node.png)

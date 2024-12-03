@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/maxence-charriere/go-app/v9/pkg/app"
+	"github.com/maxence-charriere/go-app/v10/pkg/app"
 	"github.com/mitchellh/mapstructure"
 	shell "github.com/stateless-minds/go-ipfs-api"
 )
@@ -168,11 +168,11 @@ func (c *cybergiftonomy) subscriptionCollectGift(ctx app.Context) {
 
 func (c *cybergiftonomy) Render() app.UI {
 	return app.Div().Class("app page-wrap xyz-in").Body(
-		app.If(len(c.alert) > 0,
-			app.Div().Class("container alert").Body(
+		app.If(len(c.alert) > 0, func() app.UI {
+			return app.Div().Class("container alert").Body(
 				app.Text(c.alert),
-			),
-		),
+			)
+		}),
 		app.Div().Class("col center-x space-y-0 pt-50 page-hero").Attr("xyz", "fade small stagger ease-out-back").Body(
 			app.H1().Class("title hero-logo xyz-nested").Text("CyberGiftonomy"),
 			app.H2().Class("subtitle hero-text xyz-nested pt-5").Text("Give what you can, get what you need!"),
@@ -423,7 +423,9 @@ func (c *cybergiftonomy) onCollectGift(ctx app.Context, e app.Event) {
 }
 
 func main() {
-	app.Route("/", &cybergiftonomy{})
+	app.Route("/", func() app.Composer{
+		return &cybergiftonomy{}
+	})
 	app.RunWhenOnBrowser()
 	http.Handle("/", &app.Handler{
 		Name:        "cybergiftonomy",
